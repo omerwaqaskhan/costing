@@ -1,0 +1,16 @@
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Gothic+A1:wght@300;400;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Apply Gothic A1 Globally */
+body {
+  @apply font-gothic bg-white text-gray-900 transition-all duration-300;
+}
+
+/* Dark Mode */
+.dark {
+  @apply bg-gray-900 text-white;
+}

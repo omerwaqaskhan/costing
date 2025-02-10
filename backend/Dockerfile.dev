@@ -1,0 +1,10 @@
+FROM python:3.13
+WORKDIR /app
+# Install PostgreSQL client
+RUN apt-get update && apt-get install -y postgresql-client
+COPY requirements /app/requirements
+RUN pip install --no-cache-dir -r requirements/base.txt
+COPY . .
+RUN chmod +x run_dev.sh
+EXPOSE 80
+CMD [ "./run_dev.sh" ]

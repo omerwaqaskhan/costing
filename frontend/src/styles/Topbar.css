@@ -1,0 +1,43 @@
+/* .layout-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.layout-topbar-sticky {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+} */
+
+body {
+    color: #44474a;
+  }
+  
+  .container {
+    font-family: helvetica, arial, sans-serif;
+    padding: 4em 2em 5em 2em;
+    position: relative;
+  }
+  
+  table {
+    text-align: center;
+    width: 100%;
+  
+    th {
+      background: #f8f8f8;
+      font-weight: bold;
+    }
+  
+    th,
+    td {
+      border-bottom: 1px solid #ddd;
+      margin: 0;
+      padding: 15px 10px;
+    }
+  }
+  
+  .sticky-thc {
+    th {
+      position: sticky;
+      top: 0;
+    }
+  }

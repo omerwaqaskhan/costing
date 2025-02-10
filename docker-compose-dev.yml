@@ -1,0 +1,78 @@
+services:
+  postgres-db:
+    image: postgres:17
+    environment:
+      - POSTGRES_DB=postgres_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./backend-data/postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    networks:
+      - ampham-costing
+
+  ampham-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8000:80"
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    restart: always
+    networks:
+      - ampham-costing
+    volumes:
+      - ./backend-data/uploads:/app/uploads
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+      target: frontend-build
+    networks:
+      - ampham-costing
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.dev
+    ports:
+      - "80:80"
+    depends_on:
+      - ampham-api
+      - frontend
+    restart: always
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - ampham-costing
+  
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=a@a.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    volumes:
+       - ./backend-data/pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres-db
+    networks:
+      - ampham-costing
+
+volumes:
+  postgres_data:
+  pgadmin-data:
+
+networks:
+  ampham-costing:

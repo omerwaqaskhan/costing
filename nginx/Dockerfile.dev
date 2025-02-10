@@ -1,0 +1,23 @@
+# FROM nginx
+# COPY --from=api-frontend ./app/dist /usr/share/nginx/html/
+# COPY nginx.dev.conf /etc/nginx/nginx.dev.conf
+
+
+# Base image for Nginx
+FROM nginx
+
+# Copy the built frontend files from the frontend build
+COPY --from=ampham-frontend ./app/dist /usr/share/nginx/html/
+
+# Copy custom Nginx config
+COPY nginx.dev.conf /etc/nginx/nginx.conf
+
+# Set correct permissions and ownership
+RUN chown -R www-data:www-data /usr/share/nginx/html \
+    && chmod -R 755 /usr/share/nginx/html
+
+# Expose port 80 for HTTP traffic
+EXPOSE 80
+
+# Start Nginx server in the foreground
+CMD ["nginx", "-g", "daemon off;"]

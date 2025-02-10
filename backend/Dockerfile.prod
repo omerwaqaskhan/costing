@@ -1,0 +1,11 @@
+FROM python:3.12.4-slim AS final
+WORKDIR /app
+# Install PostgreSQL client
+RUN apt-get update && apt-get install -y postgresql-client
+COPY requirements.txt .
+# Install the dependencies in the final stage
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . /app
+RUN chmod +x run-prod.sh
+EXPOSE 80
+CMD ["./run_prod.sh"]
