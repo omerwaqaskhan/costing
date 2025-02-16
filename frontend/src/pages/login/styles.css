@@ -40,6 +40,15 @@
     }
 }
 
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
 .custom-logo {
     width: 226px !important;
     height: 92px !important;

@@ -18,7 +18,7 @@ export default {
         lightGray: '#D9D9D9',
       },
       fontFamily: {
-        gothic: ['Gothic A1'],
+        carlito: ["Carlito", "sans-serif"],
       },
     },
   },

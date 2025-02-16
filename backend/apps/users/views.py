@@ -1,8 +1,9 @@
-from django.shortcuts import render
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.response import Response
 from .serializers import CustomTokenObtainPairSerializer
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from .serializers import UserSerializer
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -57,3 +58,15 @@ class CustomTokenRefreshView(TokenRefreshView):
                 "content": {},
             }
         return Response(response_data)
+
+class CurrentUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        serializer = UserSerializer(user)  # Serialize the user object
+        return Response({
+            "is_error": False,
+            "error": {},
+            "content": serializer.data,
+        })

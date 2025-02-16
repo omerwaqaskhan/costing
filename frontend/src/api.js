@@ -40,12 +40,12 @@ api.interceptors.response.use(
 
                     // Refresh the access token
                     const refreshResponse = await axios.post(
-                        `${import.meta.env.VITE_API_URL}/auth/refresh`,
+                        `${import.meta.env.VITE_API_URL}/users/token/refresh/`,
                         { refresh_token: refreshToken }
                     );
 
-                    const newAccessToken = refreshResponse.data.access_token;
-                    const refreshToken = refreshResponse.data.refresh_token;
+                    const newAccessToken = refreshResponse.data.access;
+                    const refreshToken = refreshResponse.data.refresh;
                     localStorage.setItem(ACCESS_TOKEN, newAccessToken);
                     localStorage.setItem(REFRESH_TOKEN, refreshToken);
 
@@ -70,7 +70,7 @@ api.interceptors.response.use(
 // Login Function
 export const login = async (username, password) => {
     const formData = new FormData();
-    formData.append("username", username);
+    formData.append("email", username);
     formData.append("password", password);
 
     try {
@@ -79,10 +79,9 @@ export const login = async (username, password) => {
                 "Content-Type": "multipart/form-data",
             },
         });
-
         // Save tokens to local storage
-        localStorage.setItem(ACCESS_TOKEN, response.data.access_token)
-        localStorage.setItem(REFRESH_TOKEN, response.data.refresh_token)
+        localStorage.setItem(ACCESS_TOKEN, response.data.content.access)
+        localStorage.setItem(REFRESH_TOKEN, response.data.content.refresh)
 
         await get_current_user()
 
@@ -125,8 +124,7 @@ export const register = async (formData, navigate) => {
 // Function to get current user
 export const get_current_user = async () => {
     try {
-        // No need to add headers, the interceptor will handle it
-        const response = await api.get("/users/get_current_user_api")
+        const response = await api.get("/users/current-user/")
         return {success: true, data: response.data};  // Return user data
     } catch (error) {
         return {success: false, error: error.response?.data || "An error occurred"};

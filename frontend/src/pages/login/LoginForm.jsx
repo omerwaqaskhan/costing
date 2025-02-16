@@ -1,9 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { login, get_current_user } from '../../api.js'; 
+import { saveUserData } from '../../redux/userSlice.js';
+
 
 const LoginForm = () => {
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [showError, setShowError] = useState(false);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const handleSubmit = async (e) => {
+        setShowError(false);
+        setLoading(true);
+        e.preventDefault();
+
+        try {
+            // Use the login function from api.js
+            const result = await login(username, password);
+            if (result.success) {
+                const userResult = await get_current_user();
+                if (userResult.success) {
+                    // Dispatch the user data to Redux
+                    dispatch(saveUserData(userResult.data.content));
+                } else {
+                    console.error(userResult.error);
+                }
+                navigate("/");
+            } else {
+                setShowError(true);
+            }
+        } catch (error) {
+            setShowError(true);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <div class="w-[450px] h-[470px] bg-white/20 rounded-[15px] border border-black backdrop-blur-[05px] p-8">
-            <div className="text-white w-full ">
+        <div className="w-[450px] h-[470px] bg-white/20 rounded-[15px] border border-black backdrop-blur-[05px] p-8">
+            <div className="text-white w-full">
                 <div className="flex items-center mb-6 text-center justify-center mb-4 text-sm">
                     <img src="/login/user-icon.svg" alt="Icon" className="w-8 h-8 pr-[8px]" />
                     <span>User Login</span>
@@ -15,16 +54,44 @@ const LoginForm = () => {
                         <label className="mr-2 h-[33px] items-center flex text-sm">Password</label>
                     </div>
                     <div className="flex flex-col w-full">
-                        
-                        <input type="text" className="h-[33px] p-2 border rounded text-white border-gray-300 mb-4 text-sm" />
-                        <input type="password" className="h-[33px] p-2 border rounded text-white border-gray-300" />
-                        <button className="w-[40%] bg-blue-500 text-white p-2 rounded mb-2 mt-4">Login</button>
+                        <input 
+                            type="text" 
+                            className="h-[33px] p-2 border rounded text-black border-gray-300 mb-4 text-sm" 
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                        <input 
+                            type="password" 
+                            className="h-[33px] p-2 border rounded text-black border-gray-300" 
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <button 
+                            className="w-[40%] bg-blue-500 text-white p-2 rounded mb-2 mt-4"
+                            onClick={handleSubmit}
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <div className="flex items-center justify-center">
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                </div>
+                            ) : (
+                                "Login"
+                            )}
+                        </button>
 
                         <a href="/forgot-password" className="text-sm text-white-400 block">Forgot password?</a>
                     </div>
                 </div>
 
-                <p className="text-sm">This application is owned and operated by AMPHAM <br/><br/> 
+                {showError && (
+                    <div className="text-red-500 text-sm mb-4">
+                        Invalid username or password. Please try again.
+                    </div>
+                )}
+
+                <p className="text-sm">
+                    This application is owned and operated by AMPHAM. <br/><br/> 
                     Unauthorized access or use is strictly prohibited and may be subject to legal action.
                     <br/><br/> 
                     By logging in, you agree to abide by our <a href="/terms-of-use" className="font-bold">Terms of Use</a> and 
@@ -32,34 +99,7 @@ const LoginForm = () => {
                 </p>
             </div>
         </div>
-
-       
     );
 };
 
 export default LoginForm;
-
-/*
-<div className="w-full ">
-    <div className="flex items-center mb-6 text-center justify-center">
-        <img src="/login/user-icon.svg" alt="Icon" className="w-8 h-8 pr-[5px]" />
-        <span>User Login</span>
-    </div>
-
-    <div className="mb-4 flex">
-        <div className="text-left flex flex-col">
-            <label className="mb-4">Username</label>
-            <label>Password</label>
-        </div>
-        <div className="flex flex-col w-full justify-between">
-            <input type="text" className="h-[33px] p-2 border rounded bg-transparent text-white border-gray-300 mb-4" />
-            <input type="password" className="h-[33px] p-2 border rounded bg-transparent text-white border-gray-300" />
-            <button className="bg-blue-500 text-white p-2 rounded mb-2 mt-4">Login</button>
-
-            <a href="/forgot-password" className="text-sm text-blue-400 block mt-4">Forgot password?</a>
-        </div>
-    </div>
-
-    <p className="text-sm">Don't have an account? <a href="/signup" className="text-blue-400">Sign up</a></p>
-</div>
-*/
