@@ -15,6 +15,18 @@ import Topbar from "./Topbar.jsx";
 import Notifications from "../pages/Notifications.jsx";
 import ShowNavbar from "../components/navbar/ShowNavbar.jsx";
 
+const SESSION_TIMEOUT = 15 * 60 * 1000;
+
+function isSessionValid() {
+    const lastActivity = localStorage.getItem("lastActivity");
+    const token = localStorage.getItem("access");
+
+    if (!token || !lastActivity) return false;
+
+    const elapsedTime = Date.now() - parseInt(lastActivity, 10);
+    return elapsedTime < SESSION_TIMEOUT;
+}
+
 function Logout() {
     localStorage.clear();
     return <Navigate to="/login" replace />;
@@ -27,6 +39,11 @@ function LogoutAndRegister() {
 
 function AmphamRoutes() {
     const location = useLocation();
+
+    // Update last activity on navigation
+    React.useEffect(() => {
+        localStorage.setItem("lastActivity", Date.now().toString());
+    }, [location.pathname]);
 
     const hideTopbarRoutes = ["/login"];
     const shouldHideTopbar = hideTopbarRoutes.some((route) =>
@@ -42,7 +59,8 @@ function AmphamRoutes() {
             </ShowNavbar> */}
 
             <Routes>
-                <Route path="/" element={<Login />} />
+                {/* <Route path="/" element={<Login />} /> */}
+                <Route path="/" element={isSessionValid() ? <Home /> : <Logout />} />
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/login" element={<Login />} />
                 {/* <Route path="/profile" element={<Login />} /> */}

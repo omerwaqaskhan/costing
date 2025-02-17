@@ -20,7 +20,7 @@ function App() {
 
     return (
         <BrowserRouter>
-            <div className={`w-full h-screen transition-colors duration-300 ${darkMode ? "bg-gray-900 text-white" : "bg-[#f6f6f6] text-black"}`}>
+            <div className={`w-full h-screen transition-colors duration-300 ${darkMode ? "bg-gray-900 text-white" : "bg-[#f6f6f6] text-black"}`} style={{ fontFamily: 'Carlito, sans-serif' }}>
                 <Routes>
                     <Route path="/*" element={<AmphamRoutes />} />
                 </Routes>

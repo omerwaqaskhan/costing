@@ -83,7 +83,7 @@ export const login = async (username, password) => {
         localStorage.setItem(ACCESS_TOKEN, response.data.content.access)
         localStorage.setItem(REFRESH_TOKEN, response.data.content.refresh)
 
-        await get_current_user()
+        // await get_current_user()
 
         return {success: true, data: response.data}
     } catch (error) {
